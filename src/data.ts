@@ -101,7 +101,7 @@ export const DEFAULT_MEMORIES: MemoryItem[] = [
     date: "Year 2026",
     description: "A cute style moment with a fresh haircut and the happiest, simplest smile.",
     image: getAsset("/images/img-8"),
-    category: "Cute Memories",
+    category: "Milestones",
     tag: "Adorable"
   },
   {
@@ -112,6 +112,15 @@ export const DEFAULT_MEMORIES: MemoryItem[] = [
     image: getAsset("/images/img-9"),
     category: "Birthday",
     tag: "Birthday"
+  },
+  {
+    id: "mem-10",
+    title: "Certificate of Merit",
+    date: "Year 2023",
+    description: "A heartfelt birthday memory filled with cake, candles, and family love.",
+    image: getAsset("/images/img-10"),
+    category: "Milestones",
+    tag: "Milestone"
   }
 ];
 

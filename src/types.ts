@@ -38,3 +38,17 @@ export interface GiftItem {
   sticker: string;
   colorClass: string;
 }
+
+export interface SlideshowPhoto {
+  id: string;
+  image: string;
+  caption: string;
+}
+
+export interface SlideshowCollection {
+  id: string;
+  title: string;
+  songTitle: string;
+  soundtrackId: "anuu-darling" | "owner-of-our-hearts" | "fam-jam";
+  photos: SlideshowPhoto[];
+}

@@ -2,6 +2,12 @@
 // No assets/mp3 downloads required, completely zero-latency and 100% offline-compatible.
 
 type SynthType = "synthesized" | "cheerful" | "ambient";
+export type SlideshowTrackId = "anuu-darling" | "owner-of-our-hearts" | "fam-jam";
+const SLIDESHOW_AUDIO_SOURCES: Record<SlideshowTrackId, string> = {
+  "anuu-darling": new URL("../assets/audio/itni-kyun-tum-khubsurat-ho.mp3", import.meta.url).href,
+  "owner-of-our-hearts": new URL("../assets/audio/piyu-bole-piya-bole.mp3", import.meta.url).href,
+  "fam-jam": new URL("../assets/audio/pal-pal-dil-ke-paas.mp3", import.meta.url).href,
+};
 
 interface Note {
   pitch: number; // Hz representation
@@ -60,6 +66,72 @@ const BIRTHDAY_MELODY: Note[] = [
 let activeAudioContext: AudioContext | null = null;
 let currentTimeoutIDs: number[] = [];
 let activeGainNode: GainNode | null = null;
+let activeSlideshowAudio: HTMLAudioElement | null = null;
+const slideshowAudioCache: Partial<Record<SlideshowTrackId, HTMLAudioElement>> = {};
+
+function getAudioContext() {
+  if (!activeAudioContext) {
+    activeAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  if (activeAudioContext.state === "suspended") {
+    activeAudioContext.resume();
+  }
+  return activeAudioContext;
+}
+
+function scheduleMelodyPlayback(
+  melody: Note[],
+  options: {
+    oscillatorType: OscillatorType;
+    volume: number;
+    stretch?: number;
+    timeoutBucket: number[];
+    setGainNode: (gainNode: GainNode) => void;
+    onComplete?: () => void;
+  }
+) {
+  const ctx = getAudioContext();
+  const gainNode = ctx.createGain();
+  gainNode.gain.setValueAtTime(options.volume, ctx.currentTime);
+  gainNode.connect(ctx.destination);
+  options.setGainNode(gainNode);
+
+  let currentTimeOffset = ctx.currentTime + 0.08;
+  const stretch = options.stretch ?? 1.35;
+
+  melody.forEach((note) => {
+    const playDelayMs = (currentTimeOffset - ctx.currentTime) * 1000;
+    const timeoutId = window.setTimeout(() => {
+      const osc = ctx.createOscillator();
+      const noteGain = ctx.createGain();
+
+      osc.connect(noteGain);
+      noteGain.connect(gainNode);
+      osc.type = options.oscillatorType;
+      osc.frequency.setValueAtTime(note.pitch, ctx.currentTime);
+
+      const duration = note.duration * stretch;
+      noteGain.gain.setValueAtTime(0, ctx.currentTime);
+      noteGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.04);
+      noteGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration - 0.04);
+
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + duration);
+      osc.onended = () => {
+        osc.disconnect();
+        noteGain.disconnect();
+      };
+    }, playDelayMs);
+
+    options.timeoutBucket.push(timeoutId);
+    currentTimeOffset += note.duration * 1.25;
+  });
+
+  if (options.onComplete) {
+    const finalTimeout = window.setTimeout(options.onComplete, (currentTimeOffset - ctx.currentTime) * 1000);
+    options.timeoutBucket.push(finalTimeout);
+  }
+}
 
 export function stopSynthesizedSoundtrack() {
   currentTimeoutIDs.forEach((id) => clearTimeout(id));
@@ -71,94 +143,76 @@ export function stopSynthesizedSoundtrack() {
   }
 }
 
+export function stopSlideshowSoundtrack() {
+  if (activeSlideshowAudio) {
+    activeSlideshowAudio.pause();
+    activeSlideshowAudio.currentTime = 0;
+    activeSlideshowAudio.onended = null;
+  }
+  activeSlideshowAudio = null;
+}
+
 export function playSynthesizedSoundtrack(type: SynthType = "synthesized", volume: number = 0.2, onComplete?: () => void) {
   // Stop existing sounds first
   stopSynthesizedSoundtrack();
 
   // Initialize or resume context
   try {
-    if (!activeAudioContext) {
-      activeAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-    }
-    if (activeAudioContext.state === "suspended") {
-      activeAudioContext.resume();
-    }
+    getAudioContext();
   } catch (e) {
     console.warn("Web Audio API not supported", e);
     return;
   }
 
-  const ctx = activeAudioContext;
-  const gainNode = ctx.createGain();
-  activeGainNode = gainNode;
-  
-  // Set safety volume boundaries
-  gainNode.gain.setValueAtTime(volume, ctx.currentTime);
-  gainNode.connect(ctx.destination);
+  const oscillatorType: OscillatorType =
+    type === "synthesized" ? "square" : type === "cheerful" ? "triangle" : "sine";
 
-  let currentTimeOffset = ctx.currentTime + 0.1;
-
-  BIRTHDAY_MELODY.forEach((note, index) => {
-    // Schedule Synthesizer trigger timers
-    const playDelayMs = (currentTimeOffset - ctx.currentTime) * 1000;
-    
-    const timeoutId = window.setTimeout(() => {
-      // Create oscillator
-      const osc = ctx.createOscillator();
-      const noteGain = ctx.createGain();
-
-      osc.connect(noteGain);
-      noteGain.connect(gainNode);
-
-      // Waveshapes based on selected aesthetic flavor
-      if (type === "synthesized") {
-        osc.type = "square"; // 8-Bit chiptune theme
-      } else if (type === "cheerful") {
-        osc.type = "triangle"; // Bubbly retro waves
-      } else {
-        osc.type = "sine"; // Cool sci-fi ambient
-      }
-
-      osc.frequency.setValueAtTime(note.pitch, ctx.currentTime);
-      
-      // Fine-tuned ADSR envelope to make it sound premium (no clicks!)
-      const duration = note.duration * 1.5;
-      noteGain.gain.setValueAtTime(0, ctx.currentTime);
-      noteGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.05);
-      noteGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration - 0.05);
-
-      osc.start(ctx.currentTime);
-      osc.stop(ctx.currentTime + duration);
-
-      // Clean up nodes when note completes
-      osc.onended = () => {
-        osc.disconnect();
-        noteGain.disconnect();
-      };
-    }, playDelayMs);
-
-    currentTimeoutIDs.push(timeoutId);
-    
-    // Add spacer before next note
-    currentTimeOffset += note.duration * 1.4;
+  scheduleMelodyPlayback(BIRTHDAY_MELODY, {
+    oscillatorType,
+    volume,
+    stretch: 1.5,
+    timeoutBucket: currentTimeoutIDs,
+    setGainNode: (gainNode) => {
+      activeGainNode = gainNode;
+    },
+    onComplete,
   });
+}
 
-  // Schedule final complete callback
-  const totalDurationMs = (currentTimeOffset - ctx.currentTime) * 1000;
-  const finalTimeout = window.setTimeout(() => {
-    if (onComplete) onComplete();
-  }, totalDurationMs);
-  
-  currentTimeoutIDs.push(finalTimeout);
+export function playSlideshowSoundtrack(trackId: SlideshowTrackId, volume: number = 0.14, onComplete?: () => void) {
+  stopSlideshowSoundtrack();
+
+  try {
+    const audio =
+      slideshowAudioCache[trackId] ??
+      new Audio(SLIDESHOW_AUDIO_SOURCES[trackId]);
+
+    slideshowAudioCache[trackId] = audio;
+    activeSlideshowAudio = audio;
+    audio.pause();
+    audio.currentTime = 0;
+    audio.volume = volume;
+    audio.preload = "auto";
+    audio.onended = () => {
+      if (onComplete) onComplete();
+    };
+
+    const playPromise = audio.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch((error) => {
+        console.warn("Unable to autoplay slideshow soundtrack", error);
+      });
+    }
+  } catch (e) {
+    console.warn("Audio playback not supported", e);
+    return;
+  }
 }
 
 // Fun interactive UI sound effect triggers
 export function playPopSfx() {
   try {
-    const ctx = activeAudioContext || new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
+    const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     
@@ -180,10 +234,7 @@ export function playPopSfx() {
 
 export function playConfettiSfx() {
   try {
-    const ctx = activeAudioContext || new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
+    const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     
@@ -205,10 +256,7 @@ export function playConfettiSfx() {
 
 export function playSynthesizerCoreNote(frequency: number) {
   try {
-    const ctx = activeAudioContext || new (window.AudioContext || (window as any).webkitAudioContext)();
-    if (ctx.state === "suspended") {
-      ctx.resume();
-    }
+    const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     

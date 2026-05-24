@@ -4,6 +4,7 @@ import Hero from "./components/Hero";
 import AboutTimeline from "./components/AboutTimeline";
 import CelebrationDeck from "./components/CelebrationDeck";
 import Gallery from "./components/Gallery";
+import PhotoSlideshows from "./components/PhotoSlideshows";
 import WishCreator from "./components/WishCreator";
 import GiftRevealer from "./components/GiftRevealer";
 import RsvpForm from "./components/RsvpForm";
@@ -11,6 +12,7 @@ import Customizer from "./components/Customizer";
 import SisterLetter from "./components/SisterLetter";
 import { BirthdayProfile, MemoryItem, WishItem, GiftItem } from "./types";
 import { DEFAULT_PROFILE, DEFAULT_MEMORIES, DEFAULT_WISHES, DEFAULT_GIFTS } from "./data";
+import { DEFAULT_SLIDESHOWS } from "./slideshows";
 import { playSynthesizedSoundtrack, stopSynthesizedSoundtrack, playConfettiSfx } from "./utils/audio";
 import { Sparkles, Calendar, Volume2 } from "lucide-react";
 
@@ -234,6 +236,11 @@ export default function App() {
       <Gallery
         memories={memories}
         searchValue={searchValue}
+        themeColor={profile.themeColor}
+      />
+
+      <PhotoSlideshows
+        slideshows={DEFAULT_SLIDESHOWS}
         themeColor={profile.themeColor}
       />
 
