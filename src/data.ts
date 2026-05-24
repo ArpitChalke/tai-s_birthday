@@ -182,14 +182,14 @@ export const DEFAULT_GIFTS: GiftItem[] = [
     colorClass: "from-amber-400 via-red-500 to-pink-500",
     unveiled: false
   },
-  {
-    id: "gift-4",
-    title: "Coding Flow Elixir",
-    description: "Bypasses standard creative blockages. Instantly grants +100% flow state, zero stackoverflow searches, and beautiful code designs.",
-    sticker: "🧪",
-    colorClass: "from-emerald-400 via-teal-500 to-cyan-600",
-    unveiled: false
-  }
+  // {
+  //   id: "gift-4",
+  //   title: "Coding Flow Elixir",
+  //   description: "Bypasses standard creative blockages. Instantly grants +100% flow state, zero stackoverflow searches, and beautiful code designs.",
+  //   sticker: "🧪",
+  //   colorClass: "from-emerald-400 via-teal-500 to-cyan-600",
+  //   unveiled: false
+  // }
 ];
 
 export const CONGRATS_EMOJIS = ["🎂", "🎈", "🎉", "🔥", "🎸", "🍰", "🍻", "🍩", "🎁", "💖", "🌟", "✨"];
