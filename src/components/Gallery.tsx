@@ -9,7 +9,7 @@ interface GalleryProps {
   themeColor: string;
 }
 
-const CATEGORIES = ["All", "Milestones", "Party", "Travel", "Friends"];
+const CATEGORIES = ["All", "Milestones", "Party", "Travel", "Friends", "Festival", "Birthday"];
 
 export default function Gallery({ memories, searchValue, themeColor }: GalleryProps) {
   const [selectedCategory, setSelectedCategory] = useState("All");

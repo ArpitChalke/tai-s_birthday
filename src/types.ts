@@ -15,7 +15,7 @@ export interface MemoryItem {
   date: string;
   description: string;
   image: string;
-  category: "Party" | "Travel" | "Milestones" | "Friends";
+  category: "Party" | "Travel" | "Milestones" | "Friends" | "Festival" | "Birthday";
   tag: string;
 }
 

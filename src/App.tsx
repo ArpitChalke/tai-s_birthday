@@ -23,6 +23,8 @@ interface FloatingConfetti {
   angle: number; // rotate angle
 }
 
+const DEFAULT_HERO_IMAGE = "/images/WhatsApp Image 2026-05-23 at 22.26.21.jpeg";
+
 export default function App() {
   // 1. Initial State Initialization from LocalStorage
   const [profile, setProfile] = useState<BirthdayProfile>(() => {
@@ -33,7 +35,15 @@ export default function App() {
         if (parsed.name === "Arpit" || parsed.birthdayDate === "2026-09-20") {
           return DEFAULT_PROFILE;
         }
-        return parsed;
+        const shouldUseDefaultHero =
+          !parsed.mainImage ||
+          parsed.mainImage === "/assets/images/WhatsApp Image 2026-05-23 at 22.26.21.jpeg" ||
+          parsed.mainImage === "/src/assets/images/WhatsApp Image 2026-05-23 at 22.26.21.jpeg";
+
+        return {
+          ...parsed,
+          mainImage: shouldUseDefaultHero ? DEFAULT_HERO_IMAGE : parsed.mainImage,
+        };
       }
       return DEFAULT_PROFILE;
     } catch (e) {
@@ -228,12 +238,12 @@ export default function App() {
       />
 
       {/* 6. AI Wishing Assistant and Wall */}
-      <WishCreator
+      {/* <WishCreator
         name={profile.name}
         wishes={wishes}
         themeColor={profile.themeColor}
         onAddWish={handleAddFieldWish}
-      />
+      /> */}
 
       {/* 7. Mystery scratch pass gifts corner */}
       <GiftRevealer

@@ -138,11 +138,11 @@ export default function GiftRevealer({ name, gifts, themeColor, onScratchGift }:
         </div>
 
         {/* Footer info labels */}
-        <div className="text-center pt-2">
+        {/* <div className="text-center pt-2">
           <p className="text-[10px] font-mono text-slate-700 font-black uppercase tracking-widest leading-none">
             * Fully client-side micro coupons. Click to claim they are verified instantly!
           </p>
-        </div>
+        </div> */}
 
       </div>
     </section>

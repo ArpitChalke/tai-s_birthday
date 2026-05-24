@@ -1,10 +1,30 @@
 import { BirthdayProfile, MemoryItem, WishItem, GiftItem } from "./types";
 
+const ASSET_IMAGES = ((import.meta as any).glob('./assets/images/*', { eager: true, query: '?url', import: 'default' })) as Record<string, string>;
+const normalizeAssetReference = (p: string) =>
+  p
+    .replace(/^\//, "")
+    .replace(/^src\//, "")
+    .replace(/^assets\//, "")
+    .replace(/^images\//, "")
+    .toLowerCase();
+
+const getAsset = (p: string) => {
+  if (!p) return p;
+  const normalized = normalizeAssetReference(p);
+  const key = Object.keys(ASSET_IMAGES).find((k) => {
+    const fileName = k.split("/").pop()?.toLowerCase() ?? "";
+    const fileNameWithoutExt = fileName.replace(/\.[^.]+$/, "");
+    return fileName === normalized || fileNameWithoutExt === normalized;
+  });
+  return key ? ASSET_IMAGES[key] : p;
+};
+
 export const DEFAULT_PROFILE: BirthdayProfile = {
-  name: "Anagha Tai",
+  name: "Tai",
   birthdayDate: "2026-05-24",
   tagline: "THE BEST BIG SISTER & FOREVER PARTNER IN CRIME! LOVE YOU SO MUCH! 💖👩‍❤️‍👩",
-  mainImage: "/src/assets/images/anagha_tai_hero_1779532695495.png",
+  mainImage: getAsset("/images/WhatsApp Image 2026-05-23 at 22.26.21.jpeg"),
   themeColor: "rockstar-pink",
   soundtrack: "Rockstar Birthday Chime",
   artistName: "Synthesizer Orchestra",
@@ -14,57 +34,84 @@ export const DEFAULT_PROFILE: BirthdayProfile = {
 export const DEFAULT_MEMORIES: MemoryItem[] = [
   {
     id: "mem-1",
-    title: "First Rock Guitar Jam",
-    date: "Summer 2021",
-    description: "Picked up a guitar and completely rocked the neighborhood. No strings attached, just pure distortion!",
-    image: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=450",
-    category: "Milestones",
-    tag: "🎸 ROCK ON"
+    title: "Laxmi पूजन 2020",
+    date: "Year 2020",
+    description: "A warm family prayer ceremony full of flowers, incense, and gratitude for every blessing.",
+    image: getAsset("/images/img-1"),
+    category: "Festival",
+    tag: "Traditional"
   },
   {
     id: "mem-2",
-    title: "Concert Under Stars",
-    date: "July 24, 2023",
-    description: "Dancing at the summer festival till 4 AM. Good music, crisp air, and the absolute best squad of humans.",
-    image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=450",
-    category: "Party",
-    tag: "✨ ENERGETIC"
+    title: "Ganpati 2022",
+    date: "Monsoon 2022",
+    description: "A colorful monsoon procession with drum beats, sweets, and the whole neighborhood chanting together.",
+    image: getAsset("/images/img-2"),
+    category: "Festival",
+    tag: "Festive"
   },
   {
     id: "mem-3",
-    title: "Wild Coastal Roadtrip",
-    date: "Spring 2024",
-    description: "Unplanned detours, gas station gummies, custom road playlists, and watching a golden sunset over beach cliffs.",
-    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=450",
-    category: "Travel",
-    tag: "🚗 WANDERLUST"
+    title: "Laxmi Pujan 2022",
+    date: "Year 2022",
+    description: "A serene evening of prayers, diyas, and heartfelt wishes for prosperity and joy.",
+    image: getAsset("/images/img-3"),
+    category: "Festival",
+    tag: "Blessed"
   },
   {
     id: "mem-4",
-    title: "The Rockstar Birthday Cake",
-    date: "September 2024",
-    description: "A custom double-layered dark chocolate fudge cake complete with mock miniature amplifiers and sparklers.",
-    image: "https://images.unsplash.com/photo-1535141192574-5d4897c13636?auto=format&fit=crop&q=80&w=450",
-    category: "Friends",
-    tag: "🍰 DELISH"
+    title: "Hanuman Jayanti 2022",
+    date: "Year 2022",
+    description: "Temple rituals with family, sweets, and the infectious energy of devotional celebrations.",
+    image: getAsset("/images/img-4"),
+    category: "Festival",
+    tag: "Joyful"
   },
   {
     id: "mem-5",
-    title: "Late Night Studio Session",
-    date: "Winter 2025",
-    description: "Recording high-energy drum loops in a high-voltage audio room. Laughs, voice-cracks, and endless cold soda cans.",
-    image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&q=80&w=450",
-    category: "Milestones",
-    tag: "🎙️ SYNTHS"
+    title: "Birthday Celebration 2025",
+    date: "24 May 2025",
+    description: "A surprise birthday bash with cake, confetti, and the most unforgettable happy moments.",
+    image: getAsset("/images/img-5"),
+    category: "Birthday",
+    tag: "Birthday"
   },
   {
     id: "mem-6",
-    title: "High-Altitude Base Camp",
-    date: "Autumn 2025",
-    description: "Breathing in pure mountain vibes. Reached the summit just in time to shout out wishes to the universe.",
-    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=450",
-    category: "Travel",
-    tag: "🏔️ MOUNTAIN CHILL"
+    title: "Birthday celebration 2023",
+    date: "Year 2025",
+    description: "Late night laughter, heartfelt wishes, and a cozy birthday gathering with close friends.",
+    image: getAsset("/images/img-6"),
+    category: "Birthday",
+    tag: "Birthday"
+  },
+  {
+    id: "mem-7",
+    title: "Ganpati 2024",
+    date: "Year 2024",
+    description: "A grand Ganpati celebration under the rain-washed sky with music, flowers, and joy.",
+    image: getAsset("/images/img-7"),
+    category: "Festival",
+    tag: "Monsoon"
+  },
+  {
+    id: "mem-8",
+    title: "New and similar Hari cut",
+    date: "Year 2026",
+    description: "A cute style moment with a fresh haircut and the happiest, simplest smile.",
+    image: getAsset("/images/img-8"),
+    category: "Cute Memories",
+    tag: "Adorable"
+  },
+  {
+    id: "mem-9",
+    title: "Birthday Celebration 2024",
+    date: "Year 2024",
+    description: "A heartfelt birthday memory filled with cake, candles, and family love.",
+    image: getAsset("/images/img-9"),
+    category: "Birthday",
+    tag: "Birthday"
   }
 ];
 
@@ -104,8 +151,8 @@ export const DEFAULT_WISHES: WishItem[] = [
 export const DEFAULT_GIFTS: GiftItem[] = [
   {
     id: "gift-1",
-    title: "VIP Backstage Pass",
-    description: "Admit One. Grants unlimited front-row access to all impromptu guitar and air-synth performances in the kitchen!",
+    title: "A Bouque Of Love",
+    description: "It's a sunflower bouque for my flower who shines brighter than sun.",
     sticker: "🎫",
     colorClass: "from-pink-500 via-purple-600 to-indigo-700",
     unveiled: false
@@ -113,15 +160,15 @@ export const DEFAULT_GIFTS: GiftItem[] = [
   {
     id: "gift-2",
     title: "Infinite High-Fives",
-    description: "Good for one epic high-five on demand anytime you feel awesome, complete with simulated background crowd cheering!",
+    description: "Good for one epic high-five on demand anytime you feel awesome!",
     sticker: "🖐️",
     colorClass: "from-cyan-400 via-blue-500 to-indigo-600",
     unveiled: false
   },
   {
     id: "gift-3",
-    title: "Midnight Pizza Ticket",
-    description: "Grants one fresh, hot, extra-cheesy double stuffed-crust pizza delivered straight to your desk during the next late night jam.",
+    title: "Midnight SSSS Ticket",
+    description: "A SUPER fun SECRET SHARING SISTERLY SESSION",
     sticker: "🍕",
     colorClass: "from-amber-400 via-red-500 to-pink-500",
     unveiled: false

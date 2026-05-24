@@ -17,11 +17,11 @@ export default function Hero({ profile, onPopConfetti }: HeroProps) {
   // Dynamic ticking messages carousel
   useEffect(() => {
     const messages = [
-      "Let's play the music at maximum volume! 🤘",
-      "Blow the virtual candles! 🎂",
-      "Confetti explosions ready! 🎉",
-      "Unlocking secret backstage gifts... 🎁",
-      "A year older, cooler, and louder! 🔥"
+      "Sending warm wishes and sisterly hugs for Tai.",
+      "Blow the virtual candles and celebrate every moment. 🎂",
+      "Confetti moments are ready to brighten the day. 🎉",
+      "Unlock surprise keepsake gifts made just for her. 🎁",
+      "Cherish the memories, the laughter, and the love. ❤️"
     ];
     let idx = 0;
     const interval = setInterval(() => {
@@ -218,7 +218,7 @@ export default function Hero({ profile, onPopConfetti }: HeroProps) {
 
             {/* Emotional Birthday Story Hook */}
             <p className="text-xs md:text-sm text-slate-850 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              Welcome to the digital concert of the decade! Turn on your synthesizer chimes in the nav header, smash the confetti cannons, browse retro photo polaroids, unlock mystery backstage pass gifts, or generate/post custom celebratory wishes. Let's make this orbit around the sun absolutely unforgettable!
+              Every moment here is a page from a sister’s heart, created to celebrate Tai with warmth and wonder. Light up the confetti, browse retro photo polaroids, unlock surprise keepsakes, and share your own custom wishes — this is a gentle tribute to the love, laughter, and memories you share.
             </p>
 
             <div className="pt-2">
@@ -350,7 +350,7 @@ export default function Hero({ profile, onPopConfetti }: HeroProps) {
               {/* Polaroid Footer caption - handwritten style */}
               <div className="pt-3 text-center pb-1">
                 <p className="font-extrabold font-sans text-lg text-slate-950 uppercase tracking-tight flex items-center justify-center gap-1.5">
-                  WOOU YEAAH BABY! 
+                  IT'S YOUR DAY! 
                   <span className="text-lg">🎸</span>
                 </p>
                 <p className="text-[10px] font-mono font-medium text-slate-600 uppercase tracking-wider">
