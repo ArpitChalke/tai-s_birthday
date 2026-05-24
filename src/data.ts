@@ -24,7 +24,7 @@ export const DEFAULT_PROFILE: BirthdayProfile = {
   name: "Tai",
   birthdayDate: "2026-05-24",
   tagline: "THE BEST BIG SISTER & FOREVER PARTNER IN CRIME! LOVE YOU SO MUCH! 💖👩‍❤️‍👩",
-  mainImage: getAsset("/images/WhatsApp Image 2026-05-23 at 22.26.21.jpeg"),
+  mainImage: getAsset("/images/img-45"),
   themeColor: "rockstar-pink",
   soundtrack: "Rockstar Birthday Chime",
   artistName: "Synthesizer Orchestra",
